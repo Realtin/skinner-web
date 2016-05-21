@@ -12,6 +12,28 @@
     (reset! myatom 0)
     (swap! myatom fn)))
 
+                                        ; new PURE multimethod
+
+(defmulti super-parse (fn [state action]
+                        (first action)))
+                                        ; destracturing the action parameter to only use the second val
+
+(defmethod super-parse :ADD [state [_ n]]
+  (update state :mem #(+ % n)))
+
+(defmethod super-parse :SUB [state [_ n]]
+  (update state :mem #(- % n)))
+
+(defn super-read-commands
+  [state cmds]
+                                        ; for every cmd in cmds do:
+                                        ; (let state (super-parse state cmd))
+
+  (reduce #(super-parse state) cmds)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; Language Parser
 (defmulti parse (fn [my-var]
                  (first my-var)))
